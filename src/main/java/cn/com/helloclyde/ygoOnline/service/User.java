@@ -1,25 +1,28 @@
 package cn.com.helloclyde.ygoOnline.service;
 
+import cn.com.helloclyde.ygoOnline.mapper.user.model.UserExample;
+import cn.com.helloclyde.ygoOnline.mapper.user.model.UserWithBLOBs;
+import cn.com.helloclyde.ygoOnline.mapper.user.persistence.UserMapper;
+import com.jcabi.aspects.Loggable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Created by HelloClyde on 2016/12/11.
  */
-@Service
+@Service("userService")
 public class User {
+    @Autowired
+    private UserMapper userMapper;
     /**
      * 检查邮件格式
      * @param email
      * @return
      */
-    public boolean checkEmail(String email){
-        if (email == null)
-            return false;
-        if (email.equals(""))
-            return false;
-        if (email.matches("^(\\w)+(\\.\\w+)*@(\\w)+((\\.\\w+)+)$"))
-            return true;
-        return false;
+    public boolean checkEmail(String email) {
+        return email != null && !email.equals("") && email.matches("^(\\w)+(\\.\\w+)*@(\\w)+((\\.\\w+)+)$");
     }
 
     /**
@@ -28,22 +31,20 @@ public class User {
      * @return
      */
     public boolean emailIsExisted(String email){
-        return true;
+        UserExample userExample = new UserExample();
+        userExample.createCriteria().andEmailEqualTo(email);
+        List<cn.com.helloclyde.ygoOnline.mapper.user.model.User> users = userMapper.selectByExample(userExample);
+        return users.size() != 0;
     }
 
     /**
      * 检查密码是否符合要求
+     * 密码长度大于等于6，并且密码至少有一个字母
      * @param password
      * @return
      */
-    public boolean checkPassword(String password){
-        if (password.length() < 6){
-            return false;
-        }
-        if (!password.toLowerCase().matches(".*[a-z].*")){
-            return false;
-        }
-        return true;
+    public boolean checkPassword(String password) {
+        return password.length() >= 6 && password.toLowerCase().matches(".*[a-z].*");
     }
 
     /**
@@ -53,7 +54,13 @@ public class User {
      * @param password
      * @return
      */
+    @Loggable(Loggable.INFO)
     public boolean registerUser(String name,String email,String password){
+        UserWithBLOBs userWithBLOBs = new UserWithBLOBs();
+        userWithBLOBs.setEmail(email);
+        userWithBLOBs.setNickname(name);
+        userWithBLOBs.setPassword(password);
+        userMapper.insert(userWithBLOBs);
         return true;
     }
 }

@@ -1,23 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
-        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
 <generatorConfiguration>
-    <classPathEntry
-            location="D:\repo\mysql\mysql-connector-java\5.1.6\mysql-connector-java-5.1.6.jar" />
+    <classPathEntry location="C:\Users\HelloClyde\.m2\repository\mysql\mysql-connector-java\5.1.6\mysql-connector-java-5.1.6.jar" />
     <context id="context1" targetRuntime="MyBatis3">
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://xxxxxxx:8406/CL_DEMO?useUnicode=true&amp;characterEncoding=UTF-8"
-                        userId="root" password="password" />
-        <javaModelGenerator targetPackage="xxx.account.model"
-                            targetProject="D:\workspace\项目名\src\main\java" />
-        <sqlMapGenerator targetPackage="xxxx.account.persistence"
-                         targetProject="D:\workspace\项目名\包名\src\main\resources" />
-        <javaClientGenerator targetPackage="xxxx.account.persistence"
-            targetProject="D:\\workspace\项目名\src\main\java" type="XMLMAPPER" />
-        <table schema="CL_DEMO" tableName="tb_user" />
-        <table schema="CL_DEMO" tableName="tb_role" />
-        <table schema="CL_DEMO" tableName="tb_permission" />
-        <table schema="CL_DEMO" tableName="tb_role_user" />
-        <table schema="CL_DEMO" tableName="tb_permission_role" />
+                        connectionURL="jdbc:mysql://127.0.0.1:3306/ygo?characterEncoding=UTF-8"
+                        userId="root" password="root" />
+        <javaModelGenerator targetPackage="cn.com.helloclyde.ygoOnline.mapper.user.model"
+                            targetProject="E:\MyIdeaWorkSpace\YGO-online\src\main\java\" />
+        <sqlMapGenerator targetPackage="cn.com.helloclyde.ygoOnline.persistence"
+                         targetProject="E:\MyIdeaWorkSpace\YGO-online\src\main\resources\" />
+        <javaClientGenerator targetPackage="cn.com.helloclyde.ygoOnline.mapper.user.persistence"
+            targetProject="E:\MyIdeaWorkSpace\YGO-online\src\main\java\" type="XMLMAPPER" />
+        <table schema="ygo" tableName="user" />
     </context>
 </generatorConfiguration>
