@@ -6,12 +6,12 @@
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
                         connectionURL="jdbc:mysql://127.0.0.1:3306/ygo?characterEncoding=UTF-8"
                         userId="root" password="root" />
-        <javaModelGenerator targetPackage="cn.com.helloclyde.ygoOnline.mapper.user.model"
+        <javaModelGenerator targetPackage="cn.com.helloclyde.ygoService.mapper.model"
                             targetProject="E:\MyIdeaWorkSpace\YGO-online\src\main\java\" />
-        <sqlMapGenerator targetPackage="cn.com.helloclyde.ygoOnline.persistence"
+        <sqlMapGenerator targetPackage="cn.com.helloclyde.ygoService.mapper.persistence"
                          targetProject="E:\MyIdeaWorkSpace\YGO-online\src\main\resources\" />
-        <javaClientGenerator targetPackage="cn.com.helloclyde.ygoOnline.mapper.user.persistence"
+        <javaClientGenerator targetPackage="cn.com.helloclyde.ygoService.mapper.persistence"
             targetProject="E:\MyIdeaWorkSpace\YGO-online\src\main\java\" type="XMLMAPPER" />
-        <table schema="ygo" tableName="user" />
+        <table schema="user" tableName="user" />
     </context>
 </generatorConfiguration>

@@ -19,6 +19,11 @@
         <param-value>1800000</param-value>
     </context-param>
 
+    <context-param>
+        <param-name>webAppRootKey</param-name>
+        <param-value>ygoService.root</param-value>
+    </context-param>
+
     <listener>
         <listener-class>
             org.springframework.web.util.Log4jConfigListener

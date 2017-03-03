@@ -1,4 +1,4 @@
-package cn.com.helloclyde.ygoOnline.vo;
+package cn.com.helloclyde.ygoService.vo;
 
 /**
  * Created by HelloClyde on 2016/12/11.

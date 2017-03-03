@@ -26,13 +26,13 @@
     </bean>
     <!--自动扫描mapper接口，并注入sqlsession-->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="cn.com.helloclyde.ygoOnline.mapper"/>
+        <property name="basePackage" value="cn.com.helloclyde.ygoService.mapper"/>
         <property name="sqlSessionFactoryBeanName" value="sqlSession"/>
     </bean>
 
     <!-- service -->
     <!--扫描service-->
-    <context:component-scan base-package="cn.com.helloclyde.ygoOnline.service"/>
+    <context:component-scan base-package="cn.com.helloclyde.ygoService.service"/>
 
     <!-- transaction -->
     <bean id="dataSourceTransactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -49,7 +49,7 @@
     </tx:advice>
 
     <aop:config>
-        <aop:advisor advice-ref="txAdvice" pointcut="execution(* cn.com.helloclyde.ygoOnline.service.*.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut="execution(* cn.com.helloclyde.ygoService.service.*.*(..))"/>
     </aop:config>
 
 </beans>
