@@ -16,6 +16,10 @@ public class Hall {
     }
 
     static public synchronized void joinRoom(UserVO userVO, int roomIdx) throws Exception {
+        if (userVO.getRoomIdx() != -1){
+            // 退出先前房间
+            exitRoom(userVO);
+        }
         Hall.rooms.get(roomIdx).addPlayer(userVO);
         userVO.setRoomIdx(roomIdx);
     }
