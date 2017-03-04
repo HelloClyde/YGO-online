@@ -10,7 +10,7 @@ public class Hall {
     private static volatile List<Room> rooms = new ArrayList<>();
 
     static {
-        for (int i = 0; i < 200; i++) {
+        for (int i = 0; i < 60; i++) {
             Hall.rooms.add(new Room());
         }
     }

@@ -24,6 +24,7 @@ public class CardManagerController {
         try {
             return new Gson().toJson(new ResponseResult(cardManagerService.getCardInfo(cardId)));
         } catch (Exception e) {
+            e.printStackTrace();
             return new Gson().toJson(new ResponseResult(e.hashCode(), e.getMessage()));
         }
     }

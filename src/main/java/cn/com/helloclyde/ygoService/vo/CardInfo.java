@@ -19,7 +19,7 @@ public class CardInfo{
     public CardInfo(YgodataWithBLOBs ygodataWithBLOBs){
         this.id = ygodataWithBLOBs.getId() - 1;
         this.name = ygodataWithBLOBs.getSccardname();
-        this.type = ygodataWithBLOBs.getScdcardtype();
+        this.type = ygodataWithBLOBs.getSccardtype();
         this.race = ygodataWithBLOBs.getSccardrace();
         this.attribute = ygodataWithBLOBs.getSccardattribute();
         this.starNum = ygodataWithBLOBs.getCardstarnum();
