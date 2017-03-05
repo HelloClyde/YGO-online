@@ -1,6 +1,5 @@
 package cn.com.helloclyde.ygoService.service;
 
-import cn.com.helloclyde.ygoService.mapper.model.Ygodata;
 import cn.com.helloclyde.ygoService.mapper.model.YgodataExample;
 import cn.com.helloclyde.ygoService.mapper.model.YgodataWithBLOBs;
 import cn.com.helloclyde.ygoService.mapper.persistence.YgodataMapper;

@@ -2,14 +2,13 @@ package cn.com.helloclyde.ygoService.controller;
 
 import cn.com.helloclyde.ygoService.controller.requestVO.LoginRequestVO;
 import cn.com.helloclyde.ygoService.mapper.model.UserWithBLOBs;
+import cn.com.helloclyde.ygoService.service.HallService;
 import cn.com.helloclyde.ygoService.service.UserOpService;
 import cn.com.helloclyde.ygoService.utils.Security;
-import cn.com.helloclyde.ygoService.vo.Hall;
 import cn.com.helloclyde.ygoService.vo.LoginedUser;
 import cn.com.helloclyde.ygoService.vo.ResponseResult;
 import cn.com.helloclyde.ygoService.vo.UserVO;
 import com.google.gson.Gson;
-import com.mysql.jdbc.log.Log;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +25,8 @@ public class UserOpController {
 
     @Autowired
     private UserOpService userOpService;
+    @Autowired
+    private HallService hallService;
 
     @ResponseBody
     @RequestMapping(value = "/login", method = {RequestMethod.POST}, produces = "application/json;charset=UTF-8")
@@ -39,9 +40,9 @@ public class UserOpController {
             String token = Security.md5(loginResquestVO.getEmail() + loginResquestVO.getPassword());
             // 处理已经登陆的用户
             UserVO loginedUser = (UserVO) LoginedUser.get(token);
-            if (loginedUser != null){
-                if (loginedUser.getRoomIdx() != -1){
-                    Hall.exitRoom(loginedUser);
+            if (loginedUser != null) {
+                if (loginedUser.getRoomIdx() != -1) {
+                    hallService.exitRoom(loginedUser);
                 }
             }
             LoginedUser.set(token, userVO);

@@ -1,5 +1,7 @@
 package cn.com.helloclyde.ygoService.vo;
 
+import cn.com.helloclyde.ygoService.service.DuelService;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,6 +10,33 @@ import java.util.List;
  */
 public class Room {
     private List<UserVO> players = new ArrayList<>();
+    private DuelSession duelSession;
+    private List<DuelLogItem> duelLogItems = new ArrayList<>();
+    private List<Integer> LogPos = new ArrayList<>();
+
+    public List<Integer> getLogPos() {
+        return LogPos;
+    }
+
+    public void setLogPos(List<Integer> logPos) {
+        LogPos = logPos;
+    }
+
+    public List<DuelLogItem> getDuelLogItems() {
+        return duelLogItems;
+    }
+
+    public void setDuelLogItems(List<DuelLogItem> duelLogItems) {
+        this.duelLogItems = duelLogItems;
+    }
+
+    public DuelSession getDuelSession() {
+        return duelSession;
+    }
+
+    public void setDuelSession(DuelSession duelSession) {
+        this.duelSession = duelSession;
+    }
 
     public List<UserVO> getPlayers() {
         return players;
@@ -17,15 +46,4 @@ public class Room {
         this.players = players;
     }
 
-    public void addPlayer(UserVO userVO) throws Exception {
-        if (this.players.size() < 2) {
-            this.players.add(userVO);
-        }else{
-            throw new Exception("该房间玩家已满");
-        }
-    }
-
-    public void removePlayer(UserVO userVO){
-        this.players.remove(userVO);
-    }
 }

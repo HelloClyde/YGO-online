@@ -2,6 +2,8 @@ package cn.com.helloclyde.ygoService.vo;
 
 import cn.com.helloclyde.ygoService.mapper.model.YgodataWithBLOBs;
 
+import java.util.Map;
+
 /**
  * Created by HelloClyde on 2017/3/3.
  */
@@ -15,6 +17,18 @@ public class CardInfo{
     private int atk;
     private int def;
     private String depict;
+
+    public CardInfo(Map<String,Object> ygodataMap){
+        this.id = (int) ygodataMap.get("CardID");
+        this.name = (String) ygodataMap.get("SCCardName");
+        this.type = (String) ygodataMap.get("SCCardType");
+        this.race = (String) ygodataMap.get("SCCardRace");
+        this.attribute = (String) ygodataMap.get("SCCardAttribute");
+        this.starNum = (int) ygodataMap.get("CardStarNum");
+        this.atk = (int) ygodataMap.get("CardAtk");
+        this.def = (int) ygodataMap.get("CardDef");
+        this.depict = (String) ygodataMap.get("SCCardDepict");
+    }
 
     public CardInfo(YgodataWithBLOBs ygodataWithBLOBs){
         this.id = ygodataWithBLOBs.getId() - 1;

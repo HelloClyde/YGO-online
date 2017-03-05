@@ -15,21 +15,12 @@ public class Hall {
         }
     }
 
-    static public synchronized void joinRoom(UserVO userVO, int roomIdx) throws Exception {
-        if (userVO.getRoomIdx() != -1){
-            // 退出先前房间
-            exitRoom(userVO);
-        }
-        Hall.rooms.get(roomIdx).addPlayer(userVO);
-        userVO.setRoomIdx(roomIdx);
-    }
-
-    static public synchronized void exitRoom(UserVO userVO) {
-        Hall.rooms.get(userVO.getRoomIdx()).removePlayer(userVO);
-        userVO.setRoomIdx(-1);
-    }
-
-    static public List<Room> lists() {
+    public static List<Room> getRooms() {
         return rooms;
     }
+
+    private static void setRooms(List<Room> rooms) {
+        Hall.rooms = rooms;
+    }
+
 }

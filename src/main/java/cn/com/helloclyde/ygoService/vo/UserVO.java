@@ -1,24 +1,24 @@
 package cn.com.helloclyde.ygoService.vo;
 
-import cn.com.helloclyde.ygoService.mapper.model.User;
+import cn.com.helloclyde.ygoService.mapper.model.UserWithBLOBs;
 
 /**
  * Created by HelloClyde on 2017/3/3.
  */
 public class UserVO {
-    private User user;
+    private UserWithBLOBs user;
     private int roomIdx;
 
-    public UserVO(User user) {
+    public UserVO(UserWithBLOBs user) {
         this.user = user;
         this.roomIdx = -1;
     }
 
-    public User getUser() {
+    public UserWithBLOBs getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserWithBLOBs user) {
         this.user = user;
     }
 

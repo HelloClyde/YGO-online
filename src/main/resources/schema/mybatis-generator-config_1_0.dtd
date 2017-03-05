@@ -191,7 +191,7 @@
 <!--
   The ignoreColumn element is used to identify a column that should be ignored.
   No generated SQL will refer to the column, and no property will be generated
-  for the column in the model objects.
+  for the column in the vo objects.
 -->
 <!ELEMENT ignoreColumn EMPTY>
 <!ATTLIST ignoreColumn
@@ -201,7 +201,7 @@
 <!--
   The ignoreColumnsByRegex element is used to identify a column pattern that should be ignored.
   No generated SQL will refer to the column, and no property will be generated
-  for the column in the model objects.
+  for the column in the vo objects.
 -->
 <!ELEMENT ignoreColumnsByRegex (except*)>
 <!ATTLIST ignoreColumnsByRegex

@@ -1,5 +1,7 @@
 package cn.com.helloclyde.ygoService.utils;
 
+import java.util.List;
+
 /**
  * Created by HelloClyde on 2017/2/9.
  */
@@ -35,4 +37,31 @@ public class StringProcessor {
         }
         return hs;
     }
+
+    public static String join(String[] strings, String sp) {
+        if (strings.length == 0) {
+            return "";
+        }
+        StringBuffer stringBuffer = new StringBuffer();
+        for (int i = 0; i < strings.length - 1; i++) {
+            stringBuffer.append(strings[i]);
+            stringBuffer.append(sp);
+        }
+        stringBuffer.append(strings[strings.length - 1]);
+        return stringBuffer.toString();
+    }
+
+    public static <T> String join(List<T> list, String sp) {
+        if (list.size() == 0) {
+            return "";
+        }
+        StringBuffer stringBuffer = new StringBuffer();
+        for (int i = 0; i < list.size() - 1; i++) {
+            stringBuffer.append(list.get(i));
+            stringBuffer.append(sp);
+        }
+        stringBuffer.append(list.get(list.size() - 1));
+        return stringBuffer.toString();
+    }
+
 }
