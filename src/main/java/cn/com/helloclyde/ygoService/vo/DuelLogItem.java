@@ -8,10 +8,22 @@ import java.util.Map;
  */
 public class DuelLogItem {
     private Date time;
-    private String userToken;
+    private String email;
     private String action;
-    private Map<String,String> params;
+    private Map<String, String> params;
     private String duelId;
+
+    public DuelLogItem(Date time, String email, String duelId, String action, Map<String, String> params) {
+        this.time = time;
+        this.email = email;
+        this.action = action;
+        this.params = params;
+        this.duelId = duelId;
+    }
+
+    public DuelLogItem(String email, String duelId, String action, Map<String, String> params) {
+        this(new Date(), email, duelId, action, params);
+    }
 
     public Date getTime() {
         return time;
@@ -21,12 +33,12 @@ public class DuelLogItem {
         this.time = time;
     }
 
-    public String getUserToken() {
-        return userToken;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUserToken(String userToken) {
-        this.userToken = userToken;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getAction() {

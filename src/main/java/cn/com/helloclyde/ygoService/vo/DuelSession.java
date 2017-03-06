@@ -20,6 +20,10 @@ public class DuelSession {
      */
     private TurnState[] turnStates;
     /**
+     * 玩家血量
+     */
+    private int[] HP;
+    /**
      * 双方主卡组
      */
     private List<CardInfo>[] decks;
@@ -40,9 +44,41 @@ public class DuelSession {
      */
     private List<CardInfo>[] handCards;
     /**
+     * 双方怪兽区
+     */
+    private List<CardInfo>[] monsterCards;
+    /**
+     * 双方魔法陷阱区
+     */
+    private List<CardInfo>[] magicCards;
+    /**
      * 环境卡
      */
     private CardInfo envCard;
+
+    public List<CardInfo>[] getMonsterCards() {
+        return monsterCards;
+    }
+
+    public void setMonsterCards(List<CardInfo>[] monsterCards) {
+        this.monsterCards = monsterCards;
+    }
+
+    public List<CardInfo>[] getMagicCards() {
+        return magicCards;
+    }
+
+    public void setMagicCards(List<CardInfo>[] magicCards) {
+        this.magicCards = magicCards;
+    }
+
+    public int[] getHP() {
+        return HP;
+    }
+
+    public void setHP(int[] HP) {
+        this.HP = HP;
+    }
 
     public String getId() {
         return id;

@@ -1,7 +1,5 @@
 package cn.com.helloclyde.ygoService.vo;
 
-import cn.com.helloclyde.ygoService.service.DuelService;
-
 import java.util.ArrayList;
 import java.util.List;
 

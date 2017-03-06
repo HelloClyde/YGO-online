@@ -3,14 +3,11 @@ package cn.com.helloclyde.ygoService.controller;
 import cn.com.helloclyde.ygoService.service.DuelService;
 import cn.com.helloclyde.ygoService.vo.*;
 import com.google.gson.Gson;
-import com.mysql.jdbc.log.Log;
-import com.sun.tracing.dtrace.Attributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
