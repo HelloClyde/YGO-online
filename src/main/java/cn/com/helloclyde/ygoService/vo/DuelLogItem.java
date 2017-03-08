@@ -10,14 +10,14 @@ public class DuelLogItem {
     private Date time;
     private String email;
     private String action;
-    private Map<String, String> params;
+    private Map<String, String> paramsMap;
     private String duelId;
 
     public DuelLogItem(Date time, String email, String duelId, String action, Map<String, String> params) {
         this.time = time;
         this.email = email;
         this.action = action;
-        this.params = params;
+        this.paramsMap = params;
         this.duelId = duelId;
     }
 
@@ -50,11 +50,11 @@ public class DuelLogItem {
     }
 
     public Map<String, String> getParams() {
-        return params;
+        return paramsMap;
     }
 
     public void setParams(Map<String, String> params) {
-        this.params = params;
+        this.paramsMap = params;
     }
 
     public String getDuelId() {

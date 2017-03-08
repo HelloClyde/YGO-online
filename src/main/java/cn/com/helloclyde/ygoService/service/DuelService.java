@@ -87,11 +87,12 @@ public class DuelService {
     public void doClientAction(UserVO userVO, String action, Map<String, String> params) throws Exception {
         Room room = Hall.getRooms().get(userVO.getRoomIdx());
         int userIdx = room.getPlayers().indexOf(userVO);
-        if (userIdx != room.getDuelSession().getTurnId()) {
-            throw new Exception("不是当前操作玩家");
-        }
+//        if (userIdx != room.getDuelSession().getTurnId()) {
+//            throw new Exception("不是当前操作玩家");
+//        }
         synchronized (room) {
             switch (action) {
+                // 流程类
                 case "GoDP":
                     // 跳到SP
                     Goto(room, userIdx, userVO, action, TurnState.DP);
@@ -112,7 +113,7 @@ public class DuelService {
                     // 跳到M2
                     Goto(room, userIdx, userVO, action, TurnState.M2P);
                     break;
-                case "EP":
+                case "GoEP":
                     // 跳到EP
                     Goto(room, userIdx, userVO, action, TurnState.EP);
                     break;
@@ -244,21 +245,34 @@ public class DuelService {
      * @param userVO
      * @param action
      * @param handCardIdx
-     * @param monsterStatus 里侧表示，表侧表示，攻击表示 （0，1，2）
+     * @param monsterStatus 里侧表示，守备表示，攻击表示 （0，1，2）
      * @throws Exception
      */
     public void CallMonsterFromHand(Room room, int userIdx, UserVO userVO, String action, int handCardIdx, int monsterStatus) throws Exception {
         List<CardInfo> handList = getDuelCardList(room, userIdx, DuelCardListType.HAND);
         List<CardInfo> monsterList = getDuelCardList(room, userIdx, DuelCardListType.MONSTER);
-        CardInfo monsterCard = moveCard(handList, handCardIdx, monsterList, 5);
-        monsterCard.getParams().put("MonsterStatus", String.valueOf(monsterStatus));
-        room.getDuelLogItems().add(
-                new DuelLogItem(userVO.getUser().getEmail(), room.getDuelSession().getId(),
-                        action, new HashMap<String, String>() {{
-                    this.put("HandCardIdx", String.valueOf(handCardIdx));
-                    this.put("MonsterStatus", String.valueOf(monsterStatus));
-                    this.put("CardId", String.valueOf(monsterCard.getId()));
-                }}));
+        // 判断是否能被直接召唤
+        CardInfo srcHandCard = handList.get(handCardIdx);
+        if (srcHandCard.getStarNum() <= 4){
+            CardInfo monsterCard = moveCard(handList, handCardIdx, monsterList, 5);
+            monsterCard.getParams().put("MonsterStatus", String.valueOf(monsterStatus));
+            room.getDuelLogItems().add(
+                    new DuelLogItem(userVO.getUser().getEmail(), room.getDuelSession().getId(),
+                            action, new HashMap<String, String>() {{
+                        this.put("HandCardIdx", String.valueOf(handCardIdx));
+                        this.put("MonsterStatus", String.valueOf(monsterStatus));
+                        this.put("CardId", String.valueOf(monsterCard.getId()));
+                        this.put("MonsterCardIdx", String.valueOf(monsterList.indexOf(monsterCard)));
+                    }}));
+        }else{
+            int offerNum;
+            if (srcHandCard.getStarNum() > 4 && srcHandCard.getStarNum() <= 6){
+                offerNum = 1;
+            }else{
+                offerNum = 2;
+            }
+            throw new Exception("需要" + offerNum + "只祭品");
+        }
     }
 
     public void PutMagicFromHand(Room room, int userIdx, UserVO userVO, String action, int handCardIdx) throws Exception {
