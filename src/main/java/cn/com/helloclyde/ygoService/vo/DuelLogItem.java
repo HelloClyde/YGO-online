@@ -10,10 +10,10 @@ public class DuelLogItem {
     private Date time;
     private String email;
     private String action;
-    private Map<String, String> paramsMap;
+    private Map<String, Object> paramsMap;
     private String duelId;
 
-    public DuelLogItem(Date time, String email, String duelId, String action, Map<String, String> params) {
+    public DuelLogItem(Date time, String email, String duelId, String action, Map<String, Object> params) {
         this.time = time;
         this.email = email;
         this.action = action;
@@ -21,7 +21,7 @@ public class DuelLogItem {
         this.duelId = duelId;
     }
 
-    public DuelLogItem(String email, String duelId, String action, Map<String, String> params) {
+    public DuelLogItem(String email, String duelId, String action, Map<String, Object> params) {
         this(new Date(), email, duelId, action, params);
     }
 
@@ -49,11 +49,11 @@ public class DuelLogItem {
         this.action = action;
     }
 
-    public Map<String, String> getParams() {
+    public Map<String, Object> getParams() {
         return paramsMap;
     }
 
-    public void setParams(Map<String, String> params) {
+    public void setParams(Map<String, Object> params) {
         this.paramsMap = params;
     }
 

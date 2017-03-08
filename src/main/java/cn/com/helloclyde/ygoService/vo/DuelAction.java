@@ -5,19 +5,28 @@ package cn.com.helloclyde.ygoService.vo;
  */
 public enum DuelAction {
     // 流程相关
-    TurnOperator, // (email) 操作人邮箱
-    GotoDP,GotoSP,GotoM1P,GotoBP,GotoM2P,GotoEP, // 无参数
-    GiveUp, // 放弃，无参数
+    TurnOperator("TurnOperator"), // (email) 操作人邮箱覆盖原email
+    GotoDP("GotoDP"),GotoSP("GotoSP"),GotoM1P("GotoM1P"),GotoBP("GotoBP"),GotoM2P("GotoM2P"),GotoEP("GotoEP"), // 无参数
+    GiveUp("GiveUp"), // 放弃，无参数
     // 自动操作
-    DrawCard, // 无参数
+    DrawCard("DrawCard"), // 无参数
     // M1P和M2P流程操作
-    CallNormalMonster, // (handCardIdx,status) 手牌序列
-    CallMiddleMonster, // (monsterIdx1,handCardIdx,status)
-    CallHighMonster, // (monsterIdx1,monsterIdx2,handCardIdx,status)
-    PutMagic, // (handCardIdx)
-    CallMagic, // (handCardIdx)
-    ChangeMonsterStatus, // (monsterIdx, status)
+    CallNormalMonster("CallNormalMonster"), // (HandCardIdx,Status)
+    CallMiddleMonster("CallMiddleMonster"), // (MonsterIdx,HandCardIdx,Status)
+    CallHighMonster("CallHighMonster"), // (MonsterIdx1,MonsterIdx2,HandCardIdx,Status)
+    ChangeMonsterStatus("ChangeMonsterStatus"), // (MonsterIdx, Status)
+    PutMagic("PutMagic"), // (HandCardIdx,Status)
+    CallMagic("CallMagic"), // (CardIdx)
     // BP流程操作
-    AtkMonster; // (srcMonster, desMonster)
+    AtkMonster("AtkMonster"); // (SrcMonsterIdx, DesMonsterIdx) -1 代表直接攻击玩家
 
+    String action;
+
+    DuelAction(String action){
+        this.action = action;
+    }
+
+    public String getAction() {
+        return action;
+    }
 }

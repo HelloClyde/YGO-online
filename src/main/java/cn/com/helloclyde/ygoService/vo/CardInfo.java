@@ -18,7 +18,7 @@ public class CardInfo{
     private int atk;
     private int def;
     private String depict;
-    private Map<String, String> params;
+    private Map<String, Object> params;
 
     public CardInfo(YgodataWithBLOBs ygodataWithBLOBs){
         this.id = ygodataWithBLOBs.getId() - 1;
@@ -33,11 +33,11 @@ public class CardInfo{
         this.params = new HashMap<>();
     }
 
-    public Map<String, String> getParams() {
+    public Map<String, Object> getParams() {
         return params;
     }
 
-    public void setParams(Map<String, String> params) {
+    public void setParams(Map<String, Object> params) {
         this.params = params;
     }
 
