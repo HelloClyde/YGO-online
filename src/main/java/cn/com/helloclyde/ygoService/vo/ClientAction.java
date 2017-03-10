@@ -18,7 +18,7 @@ public enum ClientAction {
     CemeteryAdd("CemeteryAdd"), // (CardId)
     CemeterySub("CemeterySub"), // (CardIdx)
     // 魔法区操作
-    MagicAdd("MagicAdd"), // (CardIdx,CardId,Status) Status:0 里侧，表侧
+    MagicAdd("MagicAdd"), // (CardIdx,CardId,Status) Status:0 里侧，1表侧
     MagicSub("MagicSub"), // (CardIdx)
     // 血量改变
     HPChange("HPChange"); // (HPValue)

@@ -50,7 +50,7 @@ public class DuelService {
             duelSession.getMagicCards()[1].add(null);
         }
         // 设置先手玩家
-        duelSession.setTurnId(new Random().nextInt() % 2);
+        duelSession.setTurnId(Math.abs(new Random().nextInt(2)));
         duelSession.setTurnStates(new TurnState[]{TurnState.DP, TurnState.DP});
         // 生成战局id
         duelSession.setId(Security.md5(String.valueOf(room.getPlayers().get(0).getUser().getId()) +
@@ -71,6 +71,16 @@ public class DuelService {
                 drawCard(room, userIdx, userVO);
             }
         }
+        // 转到先手玩家
+        clientActionService.turnOperate(room, room.getPlayers().get(room.getDuelSession().getTurnId()));
+        // 进入DP
+        clientActionService.gotoDP(room, room.getPlayers().get(room.getDuelSession().getTurnId()));
+        // 抽卡
+        drawCard(room, room.getDuelSession().getTurnId(), room.getPlayers().get(room.getDuelSession().getTurnId()));
+        // 进入SP
+        clientActionService.gotoSP(room, room.getPlayers().get(room.getDuelSession().getTurnId()));
+        // 进入M1P
+        clientActionService.gotoM1P(room, room.getPlayers().get(room.getDuelSession().getTurnId()));
     }
 
     private void readUserPackage(Room room, DuelSession duelSession) {
@@ -155,11 +165,12 @@ public class DuelService {
             int enemyHP = changeHP(room, getEnemy(room, userIdx), -srcMonster.getAtk());
             if (enemyHP <= 0) {
                 clientActionService.win(room, userVO);
+            } else {
+                clientActionService.hPChange(room, getEnemyIdx(room, userIdx), -srcMonster.getAtk());
             }
-            clientActionService.hPChange(room, userIdx == 0 ? 1 : 0, -srcMonster.getAtk());
             return;
         }
-        List<CardInfo> desMonsterList = getDuelCardList(room, userIdx == 0 ? 1 : 0, DuelCardListType.MONSTER);
+        List<CardInfo> desMonsterList = getDuelCardList(room, getEnemyIdx(room, userIdx), DuelCardListType.MONSTER);
         CardInfo desMonster = desMonsterList.get(desMonsterIdx);
         int desStatus = (int) desMonster.getParams().get("Status");
         switch (desStatus) {
@@ -180,6 +191,8 @@ public class DuelService {
                     int myHP = changeHP(room, userVO, srcMonster.getAtk() - desMonster.getDef());
                     if (myHP <= 0) {
                         clientActionService.win(room, getEnemy(room, userVO));
+                    } else {
+                        clientActionService.hPChange(room, userIdx, srcMonster.getAtk() - desMonster.getDef());
                     }
                 }
                 break;
@@ -201,6 +214,8 @@ public class DuelService {
                     int enemyHP = changeHP(room, getEnemy(room, userIdx), desMonster.getAtk() - srcMonster.getAtk());
                     if (enemyHP <= 0) {
                         clientActionService.win(room, userVO);
+                    } else {
+                        clientActionService.hPChange(room, getEnemyIdx(room, userIdx), desMonster.getAtk() - srcMonster.getAtk());
                     }
                 } else {
                     // 我方怪兽进入墓地
@@ -211,6 +226,8 @@ public class DuelService {
                     int myHP = changeHP(room, userVO, srcMonster.getAtk() - desMonster.getAtk());
                     if (myHP <= 0) {
                         clientActionService.win(room, getEnemy(room, userVO));
+                    } else {
+                        clientActionService.hPChange(room, userIdx, srcMonster.getAtk() - desMonster.getAtk());
                     }
                 }
         }
@@ -349,10 +366,18 @@ public class DuelService {
     /**
      * 轮到对方玩家回合
      */
-    private void turnOperator(Room room) {
+    private void turnOperator(Room room) throws Exception {
         int turnId = room.getDuelSession().getTurnId() == 0 ? 1 : 0;
         room.getDuelSession().setTurnId(turnId);
         clientActionService.turnOperate(room, room.getPlayers().get(turnId));
+        clientActionService.gotoDP(room, room.getPlayers().get(turnId));
+        try {
+            drawCard(room, turnId, room.getPlayers().get(turnId));
+        } catch (Exception e) {
+            logger.error("err msg:", e);
+        }
+        clientActionService.gotoSP(room, room.getPlayers().get(turnId));
+        clientActionService.gotoM1P(room, room.getPlayers().get(turnId));
     }
 
     /**
@@ -414,7 +439,7 @@ public class DuelService {
         List<CardInfo> deckList = getDuelCardList(room, userIdx, DuelCardListType.DECK);
         List<CardInfo> handList = getDuelCardList(room, userIdx, DuelCardListType.HAND);
         int randomIdx = new Random().nextInt(deckList.size());
-        CardInfo randomCardInfo = moveCard(deckList, randomIdx, handList, 5);
+        CardInfo randomCardInfo = moveCard(deckList, randomIdx, handList, 6);
         clientActionService.handAdd(room, userVO, randomCardInfo.getId());
     }
 
