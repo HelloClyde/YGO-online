@@ -56,6 +56,26 @@ public class DuelSession {
      */
     private CardInfo envCard;
 
+    private boolean[] isCalled;
+
+    private int turnNum;
+
+    public int getTurnNum() {
+        return turnNum;
+    }
+
+    public void setTurnNum(int turnNum) {
+        this.turnNum = turnNum;
+    }
+
+    public boolean[] getIsCalled() {
+        return isCalled;
+    }
+
+    public void setIsCalled(boolean[] isCalled) {
+        this.isCalled = isCalled;
+    }
+
     public List<CardInfo>[] getMonsterCards() {
         return monsterCards;
     }

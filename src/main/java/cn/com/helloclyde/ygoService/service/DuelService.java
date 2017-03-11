@@ -49,6 +49,8 @@ public class DuelService {
             duelSession.getMagicCards()[0].add(null);
             duelSession.getMagicCards()[1].add(null);
         }
+        // 设置其他参数
+        duelSession.setIsCalled(new boolean[]{false, false});// 是否通常召唤过怪兽
         // 设置先手玩家
         duelSession.setTurnId(Math.abs(new Random().nextInt(2)));
         duelSession.setTurnStates(new TurnState[]{TurnState.DP, TurnState.DP});
@@ -73,6 +75,7 @@ public class DuelService {
         }
         // 转到先手玩家
         clientActionService.turnOperate(room, room.getPlayers().get(room.getDuelSession().getTurnId()));
+        room.getDuelSession().setTurnNum(1);
         // 进入DP
         clientActionService.gotoDP(room, room.getPlayers().get(room.getDuelSession().getTurnId()));
         // 抽卡
@@ -110,9 +113,9 @@ public class DuelService {
     public void doClientAction(UserVO userVO, String action, Map<String, String> params) throws Exception {
         Room room = Hall.getRooms().get(userVO.getRoomIdx());
         int userIdx = room.getPlayers().indexOf(userVO);
-//        if (userIdx != room.getDuelSession().getTurnId()) {
-//            throw new Exception("不是当前操作玩家");
-//        }
+        if (userIdx != room.getDuelSession().getTurnId()) {
+            throw new Exception("不是当前操作玩家");
+        }
         synchronized (room) {
             if (action.equals(DuelAction.TurnOperator.getAction())) {
                 turnOperator(room);
@@ -152,15 +155,22 @@ public class DuelService {
     }
 
     private void atkMonster(Room room, UserVO userVO, int userIdx, Map<String, String> params) throws Exception {
+        if (room.getDuelSession().getTurnNum() == 1){
+            throw new Exception("第一回合不能直接攻击");
+        }
         int srcMonsterIdx = Integer.parseInt(params.get("SrcMonsterIdx"));
         int desMonsterIdx = Integer.parseInt(params.get("DesMonsterIdx"));
         List<CardInfo> srcMonsterList = getDuelCardList(room, userIdx, DuelCardListType.MONSTER);
         List<CardInfo> srcCemeteryList = getDuelCardList(room, userIdx, DuelCardListType.CEMETERY);
         List<CardInfo> desCemeteryList = getDuelCardList(room, getEnemyIdx(room, userIdx), DuelCardListType.CEMETERY);
         CardInfo srcMonster = srcMonsterList.get(srcMonsterIdx);
+        if (srcMonster.getParams().get("isAtk") != null && (boolean) srcMonster.getParams().get("isAtk")) {
+            throw new Exception("该怪兽已经攻击过");
+        }
         if ((int) srcMonster.getParams().get("Status") != 2) {
             throw new Exception("怪兽未在攻击状态");
         }
+        srcMonster.getParams().put("isAtk", true);
         if (desMonsterIdx == -1) {
             int enemyHP = changeHP(room, getEnemy(room, userIdx), -srcMonster.getAtk());
             if (enemyHP <= 0) {
@@ -265,6 +275,9 @@ public class DuelService {
     }
 
     private void callHighMonster(Room room, UserVO userVO, int userIdx, Map<String, String> params) throws Exception {
+        if (room.getDuelSession().getIsCalled()[userIdx]) {
+            throw new Exception("每回合只能普通召唤一次");
+        }
         int monsterIdx1 = Integer.parseInt(params.get("MonsterIdx1"));
         int monsterIdx2 = Integer.parseInt(params.get("MonsterIdx2"));
         int handCardIdx = Integer.parseInt(params.get("HandCardIdx"));
@@ -286,12 +299,16 @@ public class DuelService {
             srcHandCard.getParams().put("Status", status);
             clientActionService.handSub(room, userVO, handCardIdx);
             clientActionService.monsterAdd(room, userVO, cardIdx, srcHandCard.getId(), status);
+            room.getDuelSession().getIsCalled()[userIdx] = true;
         } else {
             throw new Exception("该怪兽不符合召唤条件");
         }
     }
 
     private void callMiddleMonster(Room room, UserVO userVO, int userIdx, Map<String, String> params) throws Exception {
+        if (room.getDuelSession().getIsCalled()[userIdx]) {
+            throw new Exception("每回合只能普通召唤一次");
+        }
         int monsterIdx = Integer.parseInt(params.get("MonsterIdx"));
         int handCardIdx = Integer.parseInt(params.get("HandCardIdx"));
         int status = Integer.parseInt(params.get("Status"));
@@ -309,6 +326,7 @@ public class DuelService {
             srcHandCard.getParams().put("Status", status);
             clientActionService.handSub(room, userVO, handCardIdx);
             clientActionService.monsterAdd(room, userVO, cardIdx, srcHandCard.getId(), status);
+            room.getDuelSession().getIsCalled()[userIdx] = true;
         } else {
             throw new Exception("该怪兽不符合召唤条件");
         }
@@ -377,6 +395,15 @@ public class DuelService {
             logger.error("err msg:", e);
         }
         clientActionService.gotoSP(room, room.getPlayers().get(turnId));
+        room.getDuelSession().getIsCalled()[room.getDuelSession().getTurnId()] = false;
+        // 清空怪兽攻击标志
+        for (CardInfo monsterCard : room.getDuelSession().getMonsterCards()[room.getDuelSession().getTurnId()]) {
+            if (monsterCard != null){
+                monsterCard.getParams().put("isAtk", false);
+            }
+        }
+        // 回合数加一
+        room.getDuelSession().setTurnNum(room.getDuelSession().getTurnNum() + 1);
         clientActionService.gotoM1P(room, room.getPlayers().get(turnId));
     }
 
@@ -444,6 +471,9 @@ public class DuelService {
     }
 
     private void callNormalMonster(Room room, UserVO userVO, int userIdx, Map<String, String> params) throws Exception {
+        if (room.getDuelSession().getIsCalled()[userIdx]) {
+            throw new Exception("每回合只能普通召唤一次");
+        }
         int handCardIdx = Integer.parseInt(params.get("HandCardIdx"));
         int status = Integer.parseInt(params.get("Status"));
         List<CardInfo> handList = getDuelCardList(room, userIdx, DuelCardListType.HAND);
@@ -454,6 +484,7 @@ public class DuelService {
             srcHandCard.getParams().put("Status", status);
             clientActionService.handSub(room, userVO, handCardIdx);
             clientActionService.monsterAdd(room, userVO, cardIdx, srcHandCard.getId(), status);
+            room.getDuelSession().getIsCalled()[userIdx] = true;
         } else {
             throw new Exception("该怪兽不符合召唤条件");
         }
