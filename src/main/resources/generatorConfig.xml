@@ -12,6 +12,6 @@
                          targetProject="E:\MyIdeaWorkSpace\YGO-online\src\main\resources\" />
         <javaClientGenerator targetPackage="cn.com.helloclyde.ygoService.mapper.persistence"
             targetProject="E:\MyIdeaWorkSpace\YGO-online\src\main\java\" type="XMLMAPPER" />
-        <table schema="ygo" tableName="ygodata" />
+        <table schema="ygo" tableName="config" />
     </context>
 </generatorConfiguration>

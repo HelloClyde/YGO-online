@@ -29,4 +29,15 @@ public class CardManagerController {
             return new Gson().toJson(new ResponseResult(e.hashCode(), e.getMessage()));
         }
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/get-enable-cards", method = {RequestMethod.GET}, produces = "application/json;charset=UTF-8")
+    public String getEnableCards(){
+        try{
+            return new Gson().toJson(new ResponseResult(cardManagerService.getEnableCards()));
+        } catch (Exception e){
+            e.printStackTrace();
+            return new Gson().toJson(new ResponseResult(e.hashCode(), e.getMessage()));
+        }
+    }
 }
