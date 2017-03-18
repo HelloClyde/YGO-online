@@ -8,9 +8,12 @@ import cn.com.helloclyde.ygoService.mapper.persistence.ConfigMapper;
 import cn.com.helloclyde.ygoService.mapper.persistence.YgodataMapper;
 import cn.com.helloclyde.ygoService.vo.CardInfo;
 import com.google.gson.Gson;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.smartcardio.Card;
 import java.util.*;
 
 /**
@@ -18,6 +21,8 @@ import java.util.*;
  */
 @Service("cardManagerService")
 public class CardManagerService {
+
+    private static final Logger logger = LoggerFactory.getLogger(CardManagerService.class);
     @Autowired
     private YgodataMapper ygodataMapper;
     @Autowired
@@ -35,8 +40,10 @@ public class CardManagerService {
 
     public List<Integer> getEnableCards() {
         ConfigExample configExample = new ConfigExample();
-        configExample.createCriteria().andKeyEqualTo("enable_cards");
-        List<Config> configs = configMapper.selectByExample(configExample);
+        configExample.createCriteria().andMKeyEqualTo("enable_cards");
+        List<Config> configs = configMapper.selectByExampleWithBLOBs(configExample);
+        logger.info("config:{}",new Gson().toJson(configs));
+        logger.info("config[enable_cards]:{}", configs.get(0).getValue());
         return new Gson().fromJson(configs.get(0).getValue(), List.class);
     }
 
@@ -50,9 +57,7 @@ public class CardManagerService {
             }
         }
         List<Map.Entry<Integer, Integer>> resultList = new ArrayList<>();
-        for (Map.Entry<Integer, Integer> entry : dict.entrySet()) {
-            resultList.add(entry);
-        }
+        resultList.addAll(dict.entrySet());
         resultList.sort((o1, o2) -> o1.getKey().compareTo(o2.getKey()));
         return resultList;
     }
