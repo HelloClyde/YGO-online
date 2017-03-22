@@ -3,6 +3,8 @@ package cn.com.helloclyde.ygoService.service;
 import cn.com.helloclyde.ygoService.mapper.model.UserExample;
 import cn.com.helloclyde.ygoService.mapper.model.UserWithBLOBs;
 import cn.com.helloclyde.ygoService.mapper.persistence.UserMapper;
+import cn.com.helloclyde.ygoService.vo.UserPackage;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,5 +27,13 @@ public class UserOpService {
         } else {
             return userList.get(0);
         }
+    }
+
+    public void postDecks(UserWithBLOBs userWithBLOBs, List<Integer> newDecks){
+        Gson gson = new Gson();
+        UserPackage userPackage = gson.fromJson(userWithBLOBs.getCardPackages(), UserPackage.class);
+        userPackage.setDecks(newDecks);
+        userWithBLOBs.setCardPackages(gson.toJson(userPackage));
+        userMapper.updateByPrimaryKeyWithBLOBs(userWithBLOBs);
     }
 }

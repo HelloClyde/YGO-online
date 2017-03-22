@@ -1,6 +1,7 @@
 package cn.com.helloclyde.ygoService.controller;
 
 import cn.com.helloclyde.ygoService.controller.requestVO.LoginRequestVO;
+import cn.com.helloclyde.ygoService.controller.requestVO.UpdateDecksRequestVO;
 import cn.com.helloclyde.ygoService.mapper.model.UserWithBLOBs;
 import cn.com.helloclyde.ygoService.service.HallService;
 import cn.com.helloclyde.ygoService.service.UserOpService;
@@ -77,6 +78,22 @@ public class UserOpController {
                 throw new Exception("未登陆");
             }
             return new Gson().toJson(new ResponseResult(new Gson().fromJson(loginedUser.getUser().getCardPackages(), UserPackage.class)));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Gson().toJson(new ResponseResult(e.hashCode(), e.getMessage()));
+        }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/update-decks", method = {RequestMethod.POST}, produces = "application/json;charset=UTF-8")
+    public String getDecks(@RequestBody UpdateDecksRequestVO updateDecksRequestVO) {
+        try {
+            UserVO loginedUser = (UserVO) LoginedUser.get(updateDecksRequestVO.getToken());
+            if (loginedUser == null) {
+                throw new Exception("未登陆");
+            }
+            userOpService.postDecks(loginedUser.getUser(), updateDecksRequestVO.getNewDecks());
+            return new Gson().toJson(new ResponseResult("success"));
         } catch (Exception e) {
             e.printStackTrace();
             return new Gson().toJson(new ResponseResult(e.hashCode(), e.getMessage()));

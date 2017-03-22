@@ -30,7 +30,7 @@ public class CardManagerService {
 
     public CardInfo getCardInfo(int cardId) throws Exception {
         YgodataExample ygodataExample = new YgodataExample();
-        ygodataExample.createCriteria().andIdEqualTo(cardId + 1);
+        ygodataExample.createCriteria().andIdEqualTo(cardId);
         List<YgodataWithBLOBs> ygodataWithBLOBses = ygodataMapper.selectByExampleWithBLOBs(ygodataExample);
         if (ygodataWithBLOBses.size() == 0) {
             throw new Exception("找不到该卡片");
@@ -42,8 +42,6 @@ public class CardManagerService {
         ConfigExample configExample = new ConfigExample();
         configExample.createCriteria().andMKeyEqualTo("enable_cards");
         List<Config> configs = configMapper.selectByExampleWithBLOBs(configExample);
-        logger.info("config:{}",new Gson().toJson(configs));
-        logger.info("config[enable_cards]:{}", configs.get(0).getValue());
         return new Gson().fromJson(configs.get(0).getValue(), List.class);
     }
 
