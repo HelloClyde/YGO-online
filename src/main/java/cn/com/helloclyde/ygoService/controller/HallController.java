@@ -33,7 +33,15 @@ public class HallController {
             List<Room> rooms = Hall.getRooms();
             for (Room room : rooms) {
                 RoomInfo tempRoomInfo = new RoomInfo();
-                tempRoomInfo.setPlayerNum(room.getPlayers().size());
+                List<PlayerInfo> playerInfos = new ArrayList<>();
+                for (UserVO userVO:room.getPlayers()){
+                    PlayerInfo playerInfo = new PlayerInfo();
+                    playerInfo.setUserName(userVO.getUser().getEmail());
+                    playerInfo.setWinGame(userVO.getUser().getWinGame());
+                    playerInfo.setAllGame(userVO.getUser().getAllGame());
+                    playerInfos.add(playerInfo);
+                }
+                tempRoomInfo.setPlayerInfos(playerInfos);
                 roomInfos.add(tempRoomInfo);
             }
             return new Gson().toJson(new ResponseResult(roomInfos));
@@ -80,13 +88,43 @@ public class HallController {
 }
 
 class RoomInfo {
-    private int playerNum;
+    private List<PlayerInfo> playerInfos;
 
-    public int getPlayerNum() {
-        return playerNum;
+    public List<PlayerInfo> getPlayerInfos() {
+        return playerInfos;
     }
 
-    public void setPlayerNum(int playerNum) {
-        this.playerNum = playerNum;
+    public void setPlayerInfos(List<PlayerInfo> playerInfos) {
+        this.playerInfos = playerInfos;
+    }
+}
+
+class PlayerInfo{
+    private String userName;
+    private int winGame;
+    private int allGame;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public int getWinGame() {
+        return winGame;
+    }
+
+    public void setWinGame(int winGame) {
+        this.winGame = winGame;
+    }
+
+    public int getAllGame() {
+        return allGame;
+    }
+
+    public void setAllGame(int allGame) {
+        this.allGame = allGame;
     }
 }
