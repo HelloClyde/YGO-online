@@ -42,7 +42,12 @@ public class CardManagerService {
         ConfigExample configExample = new ConfigExample();
         configExample.createCriteria().andMKeyEqualTo("enable_cards");
         List<Config> configs = configMapper.selectByExampleWithBLOBs(configExample);
-        return new Gson().fromJson(configs.get(0).getValue(), List.class);
+        List objList = new Gson().fromJson(configs.get(0).getValue(), List.class);
+        List<Integer> intList = new ArrayList<>();
+        for (Object object:objList){
+            intList.add((int) Math.round((double)object));
+        }
+        return intList;
     }
 
     public List<Map.Entry<Integer, Integer>> getCardsNum(List<Integer> reCards) {

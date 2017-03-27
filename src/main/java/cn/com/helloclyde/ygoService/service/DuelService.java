@@ -1,7 +1,9 @@
 package cn.com.helloclyde.ygoService.service;
 
+import cn.com.helloclyde.ygoService.mapper.model.User;
 import cn.com.helloclyde.ygoService.mapper.model.YgodataExample;
 import cn.com.helloclyde.ygoService.mapper.model.YgodataWithBLOBs;
+import cn.com.helloclyde.ygoService.mapper.persistence.UserMapper;
 import cn.com.helloclyde.ygoService.mapper.persistence.YgodataMapper;
 import cn.com.helloclyde.ygoService.utils.Security;
 import cn.com.helloclyde.ygoService.vo.*;
@@ -28,7 +30,13 @@ public class DuelService {
     private YgodataMapper ygodataMapper;
 
     @Autowired
+    HallService hallService;
+
+    @Autowired
     private ClientActionService clientActionService;
+
+    @Autowired
+    private UserMapper userMapper;
 
     // 这个方法没有被控制器调用，是model直接调用的
     public void initDuel(Room room) throws Exception {
@@ -113,7 +121,7 @@ public class DuelService {
     public void doClientAction(UserVO userVO, String action, Map<String, String> params) throws Exception {
         Room room = Hall.getRooms().get(userVO.getRoomIdx());
         int userIdx = room.getPlayers().indexOf(userVO);
-        if (userIdx != room.getDuelSession().getTurnId()) {
+        if (userIdx != room.getDuelSession().getTurnId() && !action.equals("GiveUp")) {
             throw new Exception("不是当前操作玩家");
         }
         synchronized (room) {
@@ -155,7 +163,7 @@ public class DuelService {
     }
 
     private void atkMonster(Room room, UserVO userVO, int userIdx, Map<String, String> params) throws Exception {
-        if (room.getDuelSession().getTurnNum() == 1){
+        if (room.getDuelSession().getTurnNum() == 1) {
             throw new Exception("第一回合不能直接攻击");
         }
         int srcMonsterIdx = Integer.parseInt(params.get("SrcMonsterIdx"));
@@ -175,6 +183,7 @@ public class DuelService {
             int enemyHP = changeHP(room, getEnemy(room, userIdx), -srcMonster.getAtk());
             if (enemyHP <= 0) {
                 clientActionService.win(room, userVO);
+                this.endDuel(room, userVO);
             } else {
                 clientActionService.hPChange(room, getEnemyIdx(room, userIdx), -srcMonster.getAtk());
             }
@@ -200,7 +209,9 @@ public class DuelService {
                     // 扣血
                     int myHP = changeHP(room, userVO, srcMonster.getAtk() - desMonster.getDef());
                     if (myHP <= 0) {
-                        clientActionService.win(room, getEnemy(room, userVO));
+                        UserVO enemyUser = getEnemy(room, userVO);
+                        clientActionService.win(room, enemyUser);
+                        this.endDuel(room, enemyUser);
                     } else {
                         clientActionService.hPChange(room, userIdx, srcMonster.getAtk() - desMonster.getDef());
                     }
@@ -224,6 +235,7 @@ public class DuelService {
                     int enemyHP = changeHP(room, getEnemy(room, userIdx), desMonster.getAtk() - srcMonster.getAtk());
                     if (enemyHP <= 0) {
                         clientActionService.win(room, userVO);
+                        this.endDuel(room, userVO);
                     } else {
                         clientActionService.hPChange(room, getEnemyIdx(room, userIdx), desMonster.getAtk() - srcMonster.getAtk());
                     }
@@ -235,7 +247,9 @@ public class DuelService {
                     // 扣血
                     int myHP = changeHP(room, userVO, srcMonster.getAtk() - desMonster.getAtk());
                     if (myHP <= 0) {
-                        clientActionService.win(room, getEnemy(room, userVO));
+                        UserVO enemyUser = getEnemy(room, userVO);
+                        clientActionService.win(room, enemyUser);
+                        this.endDuel(room, enemyUser);
                     } else {
                         clientActionService.hPChange(room, userIdx, srcMonster.getAtk() - desMonster.getAtk());
                     }
@@ -398,7 +412,7 @@ public class DuelService {
         room.getDuelSession().getIsCalled()[room.getDuelSession().getTurnId()] = false;
         // 清空怪兽攻击标志
         for (CardInfo monsterCard : room.getDuelSession().getMonsterCards()[room.getDuelSession().getTurnId()]) {
-            if (monsterCard != null){
+            if (monsterCard != null) {
                 monsterCard.getParams().put("isAtk", false);
             }
         }
@@ -414,8 +428,9 @@ public class DuelService {
      * @param userVO
      */
     private void giveUp(Room room, UserVO userVO) {
-        int winId = room.getPlayers().indexOf(userVO) == 0 ? 1 : 0;
-        clientActionService.win(room, room.getPlayers().get(winId));
+        UserVO enemyUser = this.getEnemy(room, userVO);
+        clientActionService.win(room, enemyUser);
+        this.endDuel(room, enemyUser);
     }
 
     private CardInfo moveCard(List<CardInfo> src, int srcIdx, List<CardInfo> des, int desLimit) throws Exception {
@@ -488,6 +503,20 @@ public class DuelService {
         } else {
             throw new Exception("该怪兽不符合召唤条件");
         }
+    }
+
+    private void endDuel(Room room, UserVO winUser) {
+        // 胜利者胜场和总场加一
+        winUser.getUser().setAllGame(winUser.getUser().getAllGame() + 1);
+        winUser.getUser().setWinGame(winUser.getUser().getWinGame() + 1);
+        userMapper.updateByPrimaryKeyWithBLOBs(winUser.getUser());
+        // 失败者总场加一
+        UserVO loseUser = getEnemy(room, winUser);
+        loseUser.getUser().setAllGame(loseUser.getUser().getAllGame() + 1);
+        userMapper.updateByPrimaryKeyWithBLOBs(loseUser.getUser());
+        // 退出房间
+//        hallService.exitRoom(winUser);
+//        hallService.exitRoom(loseUser);
     }
 
 }

@@ -21,7 +21,7 @@ public class CardInfo{
     private Map<String, Object> params;
 
     public CardInfo(YgodataWithBLOBs ygodataWithBLOBs){
-        this.id = ygodataWithBLOBs.getId() - 1;
+        this.id = ygodataWithBLOBs.getId();
         this.name = ygodataWithBLOBs.getSccardname();
         this.type = ygodataWithBLOBs.getSccardtype();
         this.race = ygodataWithBLOBs.getSccardrace();

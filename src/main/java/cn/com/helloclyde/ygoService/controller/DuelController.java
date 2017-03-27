@@ -1,6 +1,7 @@
 package cn.com.helloclyde.ygoService.controller;
 
 import cn.com.helloclyde.ygoService.service.DuelService;
+import cn.com.helloclyde.ygoService.service.UserOpService;
 import cn.com.helloclyde.ygoService.vo.*;
 import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class DuelController {
 
     @Autowired
     private DuelService duelService;
+
+    @Autowired
+    private UserOpService userOpService;
 
     // 获取游戏全部日志
     @ResponseBody
@@ -90,5 +94,21 @@ public class DuelController {
     @RequestMapping(value = "/get-debug", method = {RequestMethod.GET}, produces = "application/json;charset=UTF-8")
     public String getDebug() {
         return new Gson().toJson(new ResponseResult(Hall.getRooms()));
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/draw-card", method = {RequestMethod.GET}, produces = "application/json;charset=UTF-8")
+    public String drawCard(@RequestParam String token) {
+        try{
+            UserVO loginedUser = (UserVO) LoginedUser.get(token);
+            if (loginedUser == null) {
+                throw new Exception("未登陆");
+            }
+            return new Gson().toJson(new ResponseResult(this.userOpService.drawCard(loginedUser.getUser())));
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Gson().toJson(new ResponseResult(e.hashCode(), e.getMessage()));
+        }
     }
 }
